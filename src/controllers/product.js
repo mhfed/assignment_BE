@@ -25,17 +25,37 @@ export const create = async (req, res) => { // create product
 export const list = async (req, res) => { // get all
     // /product?limit=4
     // /product?sortBy=name&order=asc
-    const limitNumber = 20
+    const limitNumber = 12
     const limit = req.query.limit ? +req.query.limit : limitNumber;
     const sortBy = req.query.sortBy ? req.query.sortBy : '_id';
     const order = req.query.order ? req.query.order : 'desc';
 
     try {
-        const products = await Product.find().limit(limit).exec();
+        const products = await Product.find({}).limit(limit).sort({ sortBy: order }).exec();
         res.json(products);
     } catch (error) {
         res.status(400).json({
             message: "Lấy list không thành công"
+        })
+    }
+}
+// Search
+export const search = async (req, res) => {
+    const search = req.query.s ? req.query.s : '';
+
+    const regex = new RegExp(search, 'i');
+
+    try {
+        if (search == '') {
+            const products = await Product.find().exec();
+            res.json(products);
+        } else {
+            const products = await Product.find({ name: regex }).exec();
+            res.json(products);
+        }
+    } catch (error) {
+        res.status(400).json({
+            message: "Search không thành công"
         })
     }
 }
