@@ -16,6 +16,7 @@ export const create = async (req, res) => { // create product
         const product = await new Product(req.body).save()
         res.json(product);
     } catch (error) {
+        console.log(error);
         res.status(400).json({
             message: "Thêm sản phẩm không thành công"
         })
